@@ -1,58 +1,58 @@
 # Live Fantasy Premier League Strategy Engine
 
-Production-oriented real-time FPL strategy engine that:
-- Ingests official live FPL match data continuously from the public FPL API.
-- Recalculates player projected points every tick.
-- Re-estimates top-10k finish probabilities with Monte Carlo simulation.
-- Persists events and snapshots to SQLite with bounded retention.
-- Exposes operational health and Prometheus metrics.
+Real-time FPL strategy engine that ingests official live data, projects player points, and recalculates top-10k finish probabilities continuously.
 
-## Key Components
+## What It Does
 
-- fpl_engine/engine/ingest.py
-  - Live data provider protocol, mock provider, and event reducer.
-- fpl_engine/engine/predictor.py
-  - FPL scoring logic and expected additional points model.
-- fpl_engine/engine/ranking.py
-  - Monte Carlo top-10k probability estimator.
-- fpl_engine/engine/service.py
-  - Engine runtime, retry/backoff, durability writes, and status tracking.
-- fpl_engine/engine/storage.py
-  - SQLite repository with WAL mode and bounded cleanup.
-- fpl_engine/engine/settings.py
-  - Environment-driven runtime configuration.
-- fpl_engine/app.py
-  - FastAPI app factory with readiness, metrics, auth guard, and WebSocket streaming.
+- Ingests live data from official FPL endpoints.
+- Rebuilds player projections on each tick.
+- Runs Monte Carlo simulations for top-10k probabilities.
+- Persists snapshots and event stream data to SQLite.
+- Serves a live dashboard and API endpoints from FastAPI.
 
-## Local Run
+## Quick Start (Local)
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-uvicorn fpl_engine.app:app --reload
 ```
 
-## Real Data Configuration
-
-Set your FPL entry IDs in .env:
+Edit .env and set your real FPL team IDs:
 
 ```bash
 FPL_DATA_SOURCE=fpl
 FPL_FPL_ENTRY_IDS=123456,234567
 ```
 
-Optional:
-- Set FPL_FPL_CURRENT_EVENT to lock a specific gameweek.
-- Leave FPL_FPL_CURRENT_EVENT empty to auto-detect current gameweek.
+Start the app:
 
-The engine polls:
-- /api/bootstrap-static/ for players/teams metadata
-- /api/event/{gw}/live/ for real-time player stats
-- /api/entry/{entry_id}/ and /api/entry/{entry_id}/event/{gw}/picks/ for tracked squads
+```bash
+uvicorn fpl_engine.app:app --host 127.0.0.1 --port 8000 --reload
+```
 
-## Endpoints
+Open the frontend dashboard:
+
+- http://127.0.0.1:8000/
+
+## Real-Time Data Source
+
+When FPL_DATA_SOURCE=fpl, the engine uses:
+
+- /api/bootstrap-static/
+- /api/event/{gw}/live/
+- /api/entry/{entry_id}/
+- /api/entry/{entry_id}/event/{gw}/picks/
+
+Notes:
+
+- FPL_FPL_ENTRY_IDS is required in real mode.
+- FPL_FPL_CURRENT_EVENT is optional. If blank, the app auto-detects current gameweek.
+
+## Frontend and API
+
+Available routes:
 
 - GET /
 - GET /health/live
@@ -61,25 +61,70 @@ The engine polls:
 - GET /metrics
 - WS /ws
 
-If FPL_API_KEY is configured, pass header X-API-Key on /snapshot.
-The dashboard at / uses WebSocket updates and does not require calling /snapshot directly.
+Security behavior:
 
-## Tests
+- If FPL_API_KEY is set, /snapshot requires header X-API-Key.
+- The dashboard at / uses WebSocket updates from /ws.
+
+## Configuration
+
+All runtime settings are environment-driven through .env. See .env.example for full list.
+
+Key options:
+
+- FPL_DATA_SOURCE: mock or fpl
+- FPL_TICK_SECONDS: ingestion/prediction cadence
+- FPL_SIMULATION_SAMPLES: Monte Carlo sample count
+- FPL_SQLITE_PATH: persisted data location
+- FPL_SNAPSHOT_LIMIT and FPL_EVENT_LIMIT: retention controls
+- FPL_METRICS_ENABLED: enable or disable /metrics
+
+## Testing
 
 ```bash
-pytest -q
+python3 -m pytest -q
 ```
 
-## Container Run
+## Docker
 
 ```bash
 docker build -t fpl-engine .
 docker run --rm -p 8000:8000 --env-file .env fpl-engine
 ```
 
-## Production Readiness Notes
+## Troubleshooting
 
-- Official FPL API provider is enabled in real mode via FPL_DATA_SOURCE=fpl.
-- Back pressure, retries, and failure counts are implemented in engine runtime.
-- Event and snapshot retention is bounded via environment variables.
-- Metrics are Prometheus compatible for dashboards and alerting.
+### Port already in use
+
+If startup fails with address already in use, run on a different port:
+
+```bash
+uvicorn fpl_engine.app:app --host 127.0.0.1 --port 8001 --reload
+```
+
+### Dashboard returns 404
+
+This usually means an older server process is still running from a previous version.
+
+- Stop old process.
+- Start the current app again.
+- Confirm by opening /health/live and then /.
+
+### Real mode fails at startup
+
+Check that:
+
+- FPL_DATA_SOURCE=fpl
+- FPL_FPL_ENTRY_IDS has valid numeric entry IDs
+- Outbound access to fantasy.premierleague.com is available
+
+## Project Structure
+
+- fpl_engine/app.py: FastAPI app factory, routes, and lifecycle
+- fpl_engine/static/index.html: live frontend dashboard
+- fpl_engine/engine/fpl_provider.py: official FPL ingestion provider
+- fpl_engine/engine/service.py: orchestration, retries, persistence writes
+- fpl_engine/engine/predictor.py: projection logic
+- fpl_engine/engine/ranking.py: top-10k probability simulation
+- fpl_engine/engine/storage.py: SQLite repository
+- fpl_engine/engine/settings.py: environment-backed configuration
