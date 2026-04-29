@@ -2,12 +2,15 @@ from __future__ import annotations
 
 import asyncio
 import json
+import time
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
+from email.utils import format_datetime, parsedate_to_datetime
 from pathlib import Path
+from uuid import uuid4
 
-from fastapi import Depends, FastAPI, Header, HTTPException, Response, WebSocket, WebSocketDisconnect
-from fastapi.responses import FileResponse
+from fastapi import Depends, FastAPI, Header, HTTPException, Request, Response, WebSocket, WebSocketDisconnect
+from fastapi.responses import FileResponse, JSONResponse
 from prometheus_client import CONTENT_TYPE_LATEST, Counter, Gauge, Histogram, generate_latest
 
 from .engine.logging_utils import configure_logging
@@ -49,6 +52,15 @@ def create_app() -> FastAPI:
     app.state.engine = engine
     app.state.settings = settings
 
+    @app.middleware("http")
+    async def add_request_context(request: Request, call_next):
+        request_id = request.headers.get("X-Request-Id") or str(uuid4())
+        start = time.perf_counter()
+        response = await call_next(request)
+        response.headers["X-Request-Id"] = request_id
+        response.headers["X-Process-Time-Ms"] = f"{(time.perf_counter() - start) * 1000:.2f}"
+        return response
+
     @app.get("/")
     async def dashboard() -> FileResponse:
         return FileResponse(STATIC_ROOT / "index.html")
@@ -78,12 +90,34 @@ def create_app() -> FastAPI:
         return {"status": "ready", "engine": status}
 
     @app.get("/snapshot", dependencies=[Depends(_api_key_guard)])
-    async def snapshot() -> dict:
+    async def snapshot(request: Request) -> Response:
         REQUESTS_TOTAL.labels(path="/snapshot").inc()
         with TICK_DURATION.time():
             snap = await app.state.engine.get_snapshot()
         SNAPSHOT_ITERATION.set(snap.iteration)
-        return snap.model_dump(mode="json")
+
+        etag = f'W/"{snap.iteration}-{int(snap.as_of.timestamp())}"'
+        headers = {
+            "ETag": etag,
+            "Last-Modified": format_datetime(snap.as_of),
+            "Cache-Control": "no-cache",
+        }
+
+        if request.headers.get("if-none-match") == etag:
+            return Response(status_code=304, headers=headers)
+
+        modified_since = request.headers.get("if-modified-since")
+        if modified_since:
+            try:
+                since_dt = parsedate_to_datetime(modified_since)
+                if since_dt.tzinfo is None:
+                    since_dt = since_dt.replace(tzinfo=timezone.utc)
+                if snap.as_of <= since_dt:
+                    return Response(status_code=304, headers=headers)
+            except (TypeError, ValueError):
+                pass
+
+        return JSONResponse(content=snap.model_dump(mode="json"), headers=headers)
 
     @app.get("/metrics")
     async def metrics() -> Response:
