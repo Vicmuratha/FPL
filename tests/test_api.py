@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import datetime, timedelta, timezone
+
 from fastapi.testclient import TestClient
 
 from fpl_engine.app import create_app
@@ -24,3 +26,23 @@ def test_snapshot_endpoint() -> None:
         payload = response.json()
         assert "iteration" in payload
         assert "ranking_by_team" in payload
+
+
+def test_readiness_fails_when_engine_is_stale() -> None:
+    app = create_app()
+    stale_time = datetime.now(timezone.utc) - timedelta(seconds=60)
+
+    async def stale_status() -> dict[str, object]:
+        return {
+            "running": True,
+            "iteration": 12,
+            "failure_count": 0,
+            "last_success_at": stale_time.isoformat(),
+            "last_error": None,
+        }
+
+    app.state.engine.status = stale_status
+
+    with TestClient(app) as client:
+        response = client.get("/health/ready")
+        assert response.status_code == 503

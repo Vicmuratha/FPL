@@ -3,6 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Response, WebSocket, WebSocketDisconnect
@@ -62,6 +63,17 @@ def create_app() -> FastAPI:
         REQUESTS_TOTAL.labels(path="/health/ready").inc()
         status = await app.state.engine.status()
         if not status["running"]:
+            raise HTTPException(status_code=503, detail=status)
+
+        last_error = status.get("last_error")
+        last_success_at = status.get("last_success_at")
+        if last_error is not None or last_success_at is None:
+            raise HTTPException(status_code=503, detail=status)
+
+        success_at = datetime.fromisoformat(str(last_success_at))
+        max_age_seconds = max(3.0 * app.state.settings.tick_seconds, 10.0)
+        age_seconds = (datetime.now(timezone.utc) - success_at).total_seconds()
+        if age_seconds > max_age_seconds:
             raise HTTPException(status_code=503, detail=status)
         return {"status": "ready", "engine": status}
 
