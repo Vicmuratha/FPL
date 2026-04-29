@@ -7,20 +7,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;500;700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg: #09131f;
-        --bg-soft: #0f1f33;
-        --panel: rgba(12, 33, 55, 0.85);
-        --text: #e9f3ff;
-        --muted: #9bb4cf;
-        --accent: #47d6a2;
+        --bg: #070d16;
+        --bg-soft: #0e1826;
+        --panel: rgba(12, 26, 41, 0.82);
+        --panel-strong: rgba(15, 31, 48, 0.94);
+        --text: #eef6ff;
+        --muted: #8ea4bf;
+        --accent: #3ee3c3;
+        --accent-strong: #25ffba;
         --accent-warm: #ffb454;
-        --danger: #ff6f61;
-        --border: rgba(160, 195, 230, 0.2);
+        --danger: #ff6b5a;
+        --border: rgba(158, 189, 223, 0.22);
+        --shadow: 0 24px 60px rgba(4, 12, 22, 0.4);
       }
 
       * {
@@ -33,70 +36,262 @@
         font-family: "Space Grotesk", sans-serif;
         color: var(--text);
         background:
-          radial-gradient(circle at 15% 20%, rgba(71, 214, 162, 0.15), transparent 35%),
-          radial-gradient(circle at 85% 15%, rgba(255, 180, 84, 0.18), transparent 38%),
-          linear-gradient(135deg, var(--bg), #0a1a2d 40%, var(--bg-soft));
+          radial-gradient(circle at 12% 18%, rgba(62, 227, 195, 0.2), transparent 40%),
+          radial-gradient(circle at 86% 8%, rgba(255, 180, 84, 0.2), transparent 32%),
+          radial-gradient(circle at 30% 90%, rgba(74, 140, 255, 0.18), transparent 40%),
+          linear-gradient(140deg, var(--bg), #0b1627 50%, var(--bg-soft));
+        position: relative;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+        mix-blend-mode: soft-light;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(circle at 60% 40%, rgba(62, 227, 195, 0.08), transparent 45%);
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      .orb {
+        position: fixed;
+        border-radius: 50%;
+        filter: blur(40px);
+        opacity: 0.45;
+        z-index: 0;
+      }
+
+      .orb.one {
+        width: 240px;
+        height: 240px;
+        background: radial-gradient(circle, rgba(62, 227, 195, 0.5), transparent 70%);
+        top: 12%;
+        left: -60px;
+        animation: drift 14s ease-in-out infinite;
+      }
+
+      .orb.two {
+        width: 280px;
+        height: 280px;
+        background: radial-gradient(circle, rgba(255, 180, 84, 0.5), transparent 70%);
+        top: 8%;
+        right: -80px;
+        animation: drift 18s ease-in-out infinite;
+      }
+
+      .orb.three {
+        width: 220px;
+        height: 220px;
+        background: radial-gradient(circle, rgba(74, 140, 255, 0.45), transparent 70%);
+        bottom: 8%;
+        left: 10%;
+        animation: drift 16s ease-in-out infinite;
+      }
+
+      @keyframes drift {
+        0% {
+          transform: translate3d(0, 0, 0);
+        }
+        50% {
+          transform: translate3d(14px, -18px, 0);
+        }
+        100% {
+          transform: translate3d(0, 0, 0);
+        }
       }
 
       .shell {
-        max-width: 1100px;
+        max-width: 1200px;
         margin: 0 auto;
-        padding: 24px 16px 40px;
+        padding: 28px 18px 50px;
+        position: relative;
+        z-index: 1;
       }
 
       .hero {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 12px;
-        margin-bottom: 18px;
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+        align-items: end;
+        margin-bottom: 22px;
+      }
+
+      .hero-copy {
+        grid-column: span 8;
       }
 
       .title {
-        font-size: clamp(1.5rem, 3vw, 2.4rem);
+        font-family: "Sora", sans-serif;
+        font-size: clamp(2rem, 4vw, 3.4rem);
         margin: 0;
-        letter-spacing: 0.02em;
+        letter-spacing: 0.03em;
+        background: linear-gradient(120deg, #ffffff, rgba(62, 227, 195, 0.9));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
       .subtitle {
-        margin: 8px 0 0;
+        margin: 10px 0 0;
         color: var(--muted);
+        font-size: 1rem;
+        max-width: 560px;
+      }
+
+      .hero-meta {
+        grid-column: span 4;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-end;
       }
 
       .badge {
         font-family: "IBM Plex Mono", monospace;
-        font-size: 0.8rem;
-        padding: 7px 10px;
+        font-size: 0.78rem;
+        padding: 8px 12px;
         border-radius: 999px;
         border: 1px solid var(--border);
         background: rgba(13, 40, 63, 0.7);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .pulse {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: 0 0 0 0 rgba(62, 227, 195, 0.6);
+        animation: pulse 2s infinite;
+      }
+
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(62, 227, 195, 0.6);
+        }
+        70% {
+          box-shadow: 0 0 0 12px rgba(62, 227, 195, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(62, 227, 195, 0);
+        }
       }
 
       .grid {
         display: grid;
         grid-template-columns: repeat(12, 1fr);
-        gap: 14px;
+        gap: 16px;
       }
 
       .card {
         grid-column: span 12;
         border: 1px solid var(--border);
-        border-radius: 16px;
+        border-radius: 20px;
         background: var(--panel);
-        backdrop-filter: blur(8px);
-        padding: 14px;
+        backdrop-filter: blur(14px);
+        padding: 18px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+        animation: rise 0.8s ease both;
+      }
+
+      .grid > .card:nth-child(2) {
+        animation-delay: 0.08s;
+      }
+
+      .grid > .card:nth-child(3) {
+        animation-delay: 0.16s;
+      }
+
+      .grid > .card:nth-child(4) {
+        animation-delay: 0.24s;
+      }
+
+      .grid > .card:nth-child(5) {
+        animation-delay: 0.32s;
+      }
+
+      @keyframes rise {
+        0% {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, rgba(62, 227, 195, 0.07), transparent 50%);
+        pointer-events: none;
+      }
+
+      .card-title {
+        margin: 0 0 12px;
+        font-family: "Sora", sans-serif;
+        font-size: 1.1rem;
       }
 
       .summary {
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 10px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .signal-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .signal-tile {
+        padding: 12px;
+        border-radius: 16px;
+        background: rgba(6, 22, 35, 0.85);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .signal-tile .headline {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--muted);
+      }
+
+      .signal-tile .metric {
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .signal-tile .sub {
+        font-size: 0.8rem;
+        color: var(--muted);
       }
 
       .summary .stat {
-        padding: 10px;
-        border-radius: 12px;
-        background: rgba(8, 29, 48, 0.7);
+        padding: 12px;
+        border-radius: 14px;
+        background: var(--panel-strong);
+        border: 1px solid rgba(255, 255, 255, 0.05);
       }
 
       .label {
@@ -105,9 +300,36 @@
       }
 
       .value {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
         margin-top: 6px;
         font-weight: 700;
+      }
+
+      .value.small {
+        font-size: 1rem;
+      }
+
+      .freshness {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 8px;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        background: rgba(62, 227, 195, 0.12);
+        color: var(--accent);
+      }
+
+      .freshness.bad {
+        background: rgba(255, 107, 90, 0.14);
+        color: var(--danger);
+      }
+
+      .freshness.warn {
+        background: rgba(255, 180, 84, 0.16);
+        color: var(--accent-warm);
       }
 
       table {
@@ -128,8 +350,118 @@
         font-weight: 500;
       }
 
+      .bar-track {
+        position: relative;
+        height: 10px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+      }
+
+      .bar-fill {
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        border-radius: inherit;
+        background: linear-gradient(90deg, rgba(62, 227, 195, 0.85), rgba(255, 180, 84, 0.85));
+        width: 0%;
+        transition: width 0.4s ease;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        padding: 3px 8px;
+        border-radius: 999px;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(62, 227, 195, 0.12);
+        color: var(--accent);
+      }
+
+      .chip.warn {
+        background: rgba(255, 180, 84, 0.16);
+        color: var(--accent-warm);
+      }
+
+      .chip.bad {
+        background: rgba(255, 107, 90, 0.14);
+        color: var(--danger);
+      }
+
       .mono {
         font-family: "IBM Plex Mono", monospace;
+      }
+      .projection-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 12px;
+        margin-top: 8px;
+      }
+
+      .projection-card {
+        border-radius: 14px;
+        padding: 12px;
+        background: rgba(7, 23, 37, 0.75);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .projection-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 18px 40px rgba(5, 12, 22, 0.45);
+      }
+
+      .projection-card h4 {
+        margin: 0 0 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+      }
+
+      .projection-metric {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+        color: var(--muted);
+      }
+
+      .projection-metric strong {
+        color: var(--text);
+      }
+
+      .event-stream {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 10px;
+      }
+
+      .event-pill {
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.78rem;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        background: rgba(6, 20, 33, 0.8);
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .event-pill span {
+        white-space: nowrap;
+      }
+
+      .event-pill .type {
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+      }
+
+      .event-pill .value {
+        font-weight: 600;
       }
 
       .good {
@@ -146,24 +478,52 @@
 
       @media (max-width: 820px) {
         .summary {
-          grid-template-columns: 1fr;
+          grid-template-columns: repeat(2, 1fr);
+        }
+
+        .signal-grid {
+          grid-template-columns: repeat(2, 1fr);
         }
 
         .hero {
-          flex-direction: column;
+          grid-template-columns: 1fr;
+        }
+
+        .hero-copy,
+        .hero-meta {
+          grid-column: span 1;
+        }
+
+        .hero-meta {
           align-items: flex-start;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .summary {
+          grid-template-columns: 1fr;
+        }
+
+        .signal-grid {
+          grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
+    <div class="orb one"></div>
+    <div class="orb two"></div>
+    <div class="orb three"></div>
     <main class="shell">
       <section class="hero">
-        <div>
+        <div class="hero-copy">
           <h1 class="title">Live FPL Strategy Engine</h1>
-          <p class="subtitle">Real-time projection + top 10k probability monitor</p>
+          <p class="subtitle">A tactical command center for live projections, team momentum, and top 10k probability signals.</p>
         </div>
-        <div id="status" class="badge">Connecting...</div>
+        <div class="hero-meta">
+          <div id="status" class="badge"><span class="pulse"></span>Connecting...</div>
+          <div class="badge">Session: <span id="sessionId" class="mono">-</span></div>
+        </div>
       </section>
 
       <section class="grid">
@@ -175,22 +535,55 @@
             </div>
             <div class="stat">
               <div class="label">Snapshot Time (UTC)</div>
-              <div id="asOf" class="value mono" style="font-size: 1rem">-</div>
+              <div id="asOf" class="value mono small">-</div>
             </div>
             <div class="stat">
               <div class="label">Tracked Teams</div>
               <div id="teamsCount" class="value mono">0</div>
             </div>
+            <div class="stat">
+              <div class="label">Freshness</div>
+              <div id="freshness" class="value">
+                <span class="freshness">Awaiting data</span>
+              </div>
+            </div>
           </div>
         </article>
 
         <article class="card">
-          <h3 style="margin: 0 0 8px">Top 10k Probability</h3>
+          <h3 class="card-title">Signal Deck</h3>
+          <div class="signal-grid">
+            <div class="signal-tile">
+              <div class="headline">Top Signal Team</div>
+              <div id="topTeam" class="metric">-</div>
+              <div id="topTeamDetail" class="sub">Awaiting data</div>
+            </div>
+            <div class="signal-tile">
+              <div class="headline">Avg Top 10k Prob</div>
+              <div id="avgProb" class="metric">-</div>
+              <div id="avgProbDetail" class="sub">Awaiting data</div>
+            </div>
+            <div class="signal-tile">
+              <div class="headline">Hottest Player</div>
+              <div id="hotPlayer" class="metric">-</div>
+              <div id="hotPlayerDetail" class="sub">Awaiting data</div>
+            </div>
+            <div class="signal-tile">
+              <div class="headline">Event Velocity</div>
+              <div id="eventVelocity" class="metric">-</div>
+              <div id="eventVelocityDetail" class="sub">Awaiting data</div>
+            </div>
+          </div>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">Top 10k Radar</h3>
           <table>
             <thead>
               <tr>
                 <th>Team</th>
                 <th>Probability</th>
+                <th>Signal</th>
                 <th>Expected Rank</th>
               </tr>
             </thead>
@@ -199,18 +592,13 @@
         </article>
 
         <article class="card">
-          <h3 style="margin: 0 0 8px">Player Projections</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Player ID</th>
-                <th>Current</th>
-                <th>Expected +</th>
-                <th>Projected Total</th>
-              </tr>
-            </thead>
-            <tbody id="projectionRows"></tbody>
-          </table>
+          <h3 class="card-title">Projection Board</h3>
+          <div id="projectionCards" class="projection-grid"></div>
+        </article>
+
+        <article class="card">
+          <h3 class="card-title">Live Event Stream</h3>
+          <div id="eventStream" class="event-stream"></div>
         </article>
       </section>
     </main>
@@ -220,10 +608,22 @@
       const iterationNode = document.getElementById("iteration");
       const asOfNode = document.getElementById("asOf");
       const teamsCountNode = document.getElementById("teamsCount");
+      const freshnessNode = document.getElementById("freshness");
+      const sessionIdNode = document.getElementById("sessionId");
+      const topTeamNode = document.getElementById("topTeam");
+      const topTeamDetailNode = document.getElementById("topTeamDetail");
+      const avgProbNode = document.getElementById("avgProb");
+      const avgProbDetailNode = document.getElementById("avgProbDetail");
+      const hotPlayerNode = document.getElementById("hotPlayer");
+      const hotPlayerDetailNode = document.getElementById("hotPlayerDetail");
+      const eventVelocityNode = document.getElementById("eventVelocity");
+      const eventVelocityDetailNode = document.getElementById("eventVelocityDetail");
       const rankRowsNode = document.getElementById("rankRows");
-      const projectionRowsNode = document.getElementById("projectionRows");
+      const projectionCardsNode = document.getElementById("projectionCards");
+      const eventStreamNode = document.getElementById("eventStream");
 
       let reconnectTimer = null;
+      sessionIdNode.textContent = crypto.randomUUID().split("-")[0].toUpperCase();
 
       function probabilityClass(probability) {
         if (probability >= 0.6) return "good";
@@ -231,9 +631,32 @@
         return "bad";
       }
 
+      function probabilityLabel(probability) {
+        if (probability >= 0.6) return { label: "High", cls: "chip" };
+        if (probability >= 0.35) return { label: "Medium", cls: "chip warn" };
+        return { label: "Low", cls: "chip bad" };
+      }
+
       function renderSnapshot(snap) {
         iterationNode.textContent = String(snap.iteration ?? "-");
-        asOfNode.textContent = snap.as_of ? new Date(snap.as_of).toISOString() : "-";
+        const asOf = snap.as_of ? new Date(snap.as_of) : null;
+        asOfNode.textContent = asOf ? asOf.toISOString() : "-";
+
+        if (asOf) {
+          const ageSeconds = Math.max(0, (Date.now() - asOf.getTime()) / 1000);
+          let freshnessLabel = "Fresh";
+          let freshnessClass = "freshness";
+          if (ageSeconds > 20) {
+            freshnessLabel = "Stale";
+            freshnessClass = "freshness bad";
+          } else if (ageSeconds > 8) {
+            freshnessLabel = "Warming";
+            freshnessClass = "freshness warn";
+          }
+          freshnessNode.innerHTML = `<span class="${freshnessClass}">${freshnessLabel} · ${ageSeconds.toFixed(1)}s</span>`;
+        } else {
+          freshnessNode.innerHTML = `<span class="freshness">Awaiting data</span>`;
+        }
 
         const ranking = snap.ranking_by_team ?? {};
         const rows = Object.entries(ranking);
@@ -243,37 +666,105 @@
           .map(([team, estimate]) => {
             const pct = ((estimate.probability_top10k ?? 0) * 100).toFixed(2);
             const cls = probabilityClass(estimate.probability_top10k ?? 0);
+            const label = probabilityLabel(estimate.probability_top10k ?? 0);
             return `
               <tr>
                 <td>${team}</td>
                 <td class="mono ${cls}">${pct}%</td>
+                <td>
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: ${Math.min(100, Math.max(0, pct))}%"></div>
+                  </div>
+                  <div style="margin-top: 6px"><span class="${label.cls}">${label.label}</span></div>
+                </td>
                 <td class="mono">${estimate.expected_global_rank ?? "-"}</td>
               </tr>
             `;
           })
           .join("");
 
+        if (rows.length) {
+          const sorted = rows
+            .map(([team, estimate]) => ({
+              team,
+              probability: estimate.probability_top10k ?? 0,
+              rank: estimate.expected_global_rank ?? 0,
+            }))
+            .sort((a, b) => b.probability - a.probability);
+          const top = sorted[0];
+          const avg = sorted.reduce((acc, item) => acc + item.probability, 0) / sorted.length;
+          topTeamNode.textContent = top.team;
+          topTeamDetailNode.textContent = `${(top.probability * 100).toFixed(2)}% · Rank ${top.rank || "-"}`;
+          avgProbNode.textContent = `${(avg * 100).toFixed(2)}%`;
+          avgProbDetailNode.textContent = `${sorted.length} teams in scope`;
+        } else {
+          topTeamNode.textContent = "-";
+          topTeamDetailNode.textContent = "Awaiting data";
+          avgProbNode.textContent = "-";
+          avgProbDetailNode.textContent = "Awaiting data";
+        }
+
         const projections = Object.values(snap.projections ?? {})
           .sort((a, b) => (b.projected_total_points ?? 0) - (a.projected_total_points ?? 0))
-          .slice(0, 12);
+          .slice(0, 8);
 
-        projectionRowsNode.innerHTML = projections
+        projectionCardsNode.innerHTML = projections
           .map((p) => {
             return `
-              <tr>
-                <td class="mono">${p.player_id}</td>
-                <td class="mono">${(p.current_points ?? 0).toFixed(2)}</td>
-                <td class="mono">${(p.expected_additional_points ?? 0).toFixed(2)}</td>
-                <td class="mono">${(p.projected_total_points ?? 0).toFixed(2)}</td>
-              </tr>
+              <div class="projection-card">
+                <h4>Player ${p.player_id}</h4>
+                <div class="projection-metric"><span>Current</span><strong class="mono">${(p.current_points ?? 0).toFixed(2)}</strong></div>
+                <div class="projection-metric"><span>Expected +</span><strong class="mono">${(p.expected_additional_points ?? 0).toFixed(2)}</strong></div>
+                <div class="projection-metric"><span>Total</span><strong class="mono">${(p.projected_total_points ?? 0).toFixed(2)}</strong></div>
+              </div>
             `;
           })
           .join("");
+
+        if (projections.length) {
+          const topPlayer = projections[0];
+          hotPlayerNode.textContent = `#${topPlayer.player_id}`;
+          hotPlayerDetailNode.textContent = `${(topPlayer.projected_total_points ?? 0).toFixed(2)} projected`;
+        } else {
+          hotPlayerNode.textContent = "-";
+          hotPlayerDetailNode.textContent = "Awaiting data";
+        }
+
+        const events = (snap.recent_events ?? []).slice(-8).reverse();
+        eventStreamNode.innerHTML = events
+          .map((event) => {
+            return `
+              <div class="event-pill">
+                <span class="type">${event.event_type ?? "event"}</span>
+                <span class="mono">#${event.player_id ?? "-"}</span>
+                <span class="value mono">+${(event.value ?? 0).toFixed(1)}</span>
+              </div>
+            `;
+          })
+          .join("");
+
+        if (events.length >= 2) {
+          const timestamps = events
+            .map((event) => new Date(event.timestamp ?? event.as_of ?? Date.now()).getTime())
+            .filter((ts) => Number.isFinite(ts))
+            .sort((a, b) => a - b);
+          const spanSeconds = Math.max(1, (timestamps[timestamps.length - 1] - timestamps[0]) / 1000);
+          const velocity = (events.length / spanSeconds) * 60;
+          eventVelocityNode.textContent = `${velocity.toFixed(1)} / min`;
+          eventVelocityDetailNode.textContent = `From last ${events.length} events`;
+        } else {
+          eventVelocityNode.textContent = "-";
+          eventVelocityDetailNode.textContent = "Awaiting data";
+        }
       }
 
       function setStatus(text, connected) {
         statusNode.textContent = text;
         statusNode.style.borderColor = connected ? "rgba(71, 214, 162, 0.45)" : "rgba(255, 111, 97, 0.5)";
+        const pulse = statusNode.querySelector(".pulse");
+        if (pulse) {
+          pulse.style.background = connected ? "var(--accent)" : "var(--danger)";
+        }
       }
 
       function connect() {
