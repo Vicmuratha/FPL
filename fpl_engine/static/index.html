@@ -7,23 +7,23 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Sora:wght@300;500;700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <style>
       :root {
-        --bg: #070d16;
-        --bg-soft: #0e1826;
-        --panel: rgba(12, 26, 41, 0.82);
-        --panel-strong: rgba(15, 31, 48, 0.94);
-        --text: #eef6ff;
-        --muted: #8ea4bf;
-        --accent: #3ee3c3;
-        --accent-strong: #25ffba;
-        --accent-warm: #ffb454;
-        --danger: #ff6b5a;
-        --border: rgba(158, 189, 223, 0.22);
-        --shadow: 0 24px 60px rgba(4, 12, 22, 0.4);
+        --bg: #0f1115;
+        --bg-soft: #14171c;
+        --panel: rgba(22, 25, 31, 0.95);
+        --panel-strong: rgba(28, 32, 40, 0.98);
+        --text: #e2e4e9;
+        --muted: #8b92a5;
+        --accent: #5e81ac;
+        --accent-strong: #81a1c1;
+        --accent-warm: #d08770;
+        --danger: #bf616a;
+        --border: #2e3440;
+        --shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
       }
 
       * {
@@ -33,13 +33,9 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Space Grotesk", sans-serif;
+        font-family: "Inter", -apple-system, sans-serif;
         color: var(--text);
-        background:
-          radial-gradient(circle at 12% 18%, rgba(62, 227, 195, 0.2), transparent 40%),
-          radial-gradient(circle at 86% 8%, rgba(255, 180, 84, 0.2), transparent 32%),
-          radial-gradient(circle at 30% 90%, rgba(74, 140, 255, 0.18), transparent 40%),
-          linear-gradient(140deg, var(--bg), #0b1627 50%, var(--bg-soft));
+        background: var(--bg);
         position: relative;
         overflow-x: hidden;
       }
@@ -48,54 +44,14 @@
         content: "";
         position: fixed;
         inset: 0;
-        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
-        mix-blend-mode: soft-light;
-        pointer-events: none;
-        z-index: 0;
-      }
-
-      body::after {
-        content: "";
-        position: fixed;
-        inset: 0;
-        background: radial-gradient(circle at 60% 40%, rgba(62, 227, 195, 0.08), transparent 45%);
+        background: radial-gradient(circle at top right, rgba(94, 129, 172, 0.05), transparent 40%),
+                    radial-gradient(circle at bottom left, rgba(76, 86, 106, 0.05), transparent 50%);
         pointer-events: none;
         z-index: 0;
       }
 
       .orb {
-        position: fixed;
-        border-radius: 50%;
-        filter: blur(40px);
-        opacity: 0.45;
-        z-index: 0;
-      }
-
-      .orb.one {
-        width: 240px;
-        height: 240px;
-        background: radial-gradient(circle, rgba(62, 227, 195, 0.5), transparent 70%);
-        top: 12%;
-        left: -60px;
-        animation: drift 14s ease-in-out infinite;
-      }
-
-      .orb.two {
-        width: 280px;
-        height: 280px;
-        background: radial-gradient(circle, rgba(255, 180, 84, 0.5), transparent 70%);
-        top: 8%;
-        right: -80px;
-        animation: drift 18s ease-in-out infinite;
-      }
-
-      .orb.three {
-        width: 220px;
-        height: 220px;
-        background: radial-gradient(circle, rgba(74, 140, 255, 0.45), transparent 70%);
-        bottom: 8%;
-        left: 10%;
-        animation: drift 16s ease-in-out infinite;
+        display: none;
       }
 
       @keyframes drift {
@@ -131,11 +87,12 @@
       }
 
       .title {
-        font-family: "Sora", sans-serif;
-        font-size: clamp(2rem, 4vw, 3.4rem);
+        font-family: "Inter", sans-serif;
+        font-weight: 700;
+        font-size: clamp(2rem, 4vw, 3rem);
         margin: 0;
-        letter-spacing: 0.03em;
-        background: linear-gradient(120deg, #ffffff, rgba(62, 227, 195, 0.9));
+        letter-spacing: -0.02em;
+        background: linear-gradient(120deg, #eceff4, #d8dee9);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
       }
@@ -143,8 +100,9 @@
       .subtitle {
         margin: 10px 0 0;
         color: var(--muted);
-        font-size: 1rem;
+        font-size: 1.05rem;
         max-width: 560px;
+        line-height: 1.5;
       }
 
       .hero-meta {
@@ -156,7 +114,7 @@
       }
 
       .badge {
-        font-family: "IBM Plex Mono", monospace;
+        font-family: "JetBrains Mono", monospace;
         font-size: 0.78rem;
         padding: 8px 12px;
         border-radius: 999px;
@@ -172,19 +130,19 @@
         height: 8px;
         border-radius: 50%;
         background: var(--accent);
-        box-shadow: 0 0 0 0 rgba(62, 227, 195, 0.6);
+        box-shadow: 0 0 0 0 rgba(94, 129, 172, 0.6);
         animation: pulse 2s infinite;
       }
 
       @keyframes pulse {
         0% {
-          box-shadow: 0 0 0 0 rgba(62, 227, 195, 0.6);
+          box-shadow: 0 0 0 0 rgba(94, 129, 172, 0.6);
         }
         70% {
-          box-shadow: 0 0 0 12px rgba(62, 227, 195, 0);
+          box-shadow: 0 0 0 12px rgba(94, 129, 172, 0);
         }
         100% {
-          box-shadow: 0 0 0 0 rgba(62, 227, 195, 0);
+          box-shadow: 0 0 0 0 rgba(94, 129, 172, 0);
         }
       }
 
@@ -238,14 +196,16 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(120deg, rgba(62, 227, 195, 0.07), transparent 50%);
+        background: linear-gradient(120deg, rgba(94, 129, 172, 0.05), transparent 50%);
         pointer-events: none;
       }
 
       .card-title {
-        margin: 0 0 12px;
-        font-family: "Sora", sans-serif;
-        font-size: 1.1rem;
+        margin: 0 0 16px;
+        font-family: "Inter", sans-serif;
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #eceff4;
       }
 
       .summary {
@@ -343,11 +303,26 @@
         text-align: left;
         padding: 9px 8px;
         border-bottom: 1px solid rgba(160, 195, 230, 0.12);
+        transition: background-color 0.2s ease;
+      }
+
+      tbody tr:hover td {
+        background-color: rgba(255, 255, 255, 0.03);
       }
 
       th {
         color: var(--muted);
         font-weight: 500;
+        user-select: none;
+      }
+      
+      th:hover {
+        color: var(--text);
+      }
+
+      .table-container {
+        width: 100%;
+        overflow-x: auto;
       }
 
       .bar-track {
@@ -448,6 +423,12 @@
         display: flex;
         justify-content: space-between;
         gap: 8px;
+        animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+      }
+      
+      @keyframes pop-in {
+        0% { opacity: 0; transform: scale(0.9) translateY(10px); }
+        100% { opacity: 1; transform: scale(1) translateY(0); }
       }
 
       .event-pill span {
@@ -596,21 +577,23 @@
         </article>
 
         <article class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px;">
             <h3 class="card-title" style="margin: 0;">Top 10k Radar</h3>
-            <input type="text" id="teamSearch" placeholder="Search team..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-strong); color: var(--text); font-family: inherit; font-size: 0.85rem; outline: none; width: 180px;">
+            <input type="text" id="teamSearch" placeholder="Search team..." style="padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); background: var(--panel-strong); color: var(--text); font-family: inherit; font-size: 0.85rem; outline: none; width: 180px; transition: border-color 0.2s, box-shadow 0.2s;">
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th style="cursor: pointer;" onclick="toggleSort('team')">Team ↕</th>
-                <th style="cursor: pointer;" onclick="toggleSort('probability')">Probability ↕</th>
-                <th>Signal</th>
-                <th style="cursor: pointer;" onclick="toggleSort('rank')">Expected Rank ↕</th>
-              </tr>
-            </thead>
-            <tbody id="rankRows"></tbody>
-          </table>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th style="cursor: pointer; min-width: 140px;" onclick="toggleSort('team')">Team ↕</th>
+                  <th style="cursor: pointer; min-width: 100px;" onclick="toggleSort('probability')">Probability ↕</th>
+                  <th style="min-width: 120px;">Signal</th>
+                  <th style="cursor: pointer; min-width: 130px;" onclick="toggleSort('rank')">Expected Rank ↕</th>
+                </tr>
+              </thead>
+              <tbody id="rankRows"></tbody>
+            </table>
+          </div>
         </article>
 
         <article class="card">
@@ -774,10 +757,11 @@
           .slice(0, 8);
 
         projectionCardsNode.innerHTML = projections
-          .map((p) => {
+          .map((p, idx) => {
             const pct = Math.min(100, ((p.current_points ?? 0) / Math.max(1, p.projected_total_points ?? 1)) * 100);
+            const animDelay = idx * 0.05;
             return `
-              <div class="projection-card">
+              <div class="projection-card" style="animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) both; animation-delay: ${animDelay}s;">
                 <h4>Player #${p.player_id}</h4>
                 <div class="projection-metric"><span>Current</span><strong class="mono good">${(p.current_points ?? 0).toFixed(1)}</strong></div>
                 <div class="projection-metric"><span>Expected +</span><strong class="mono warn">${(p.expected_additional_points ?? 0).toFixed(1)}</strong></div>
