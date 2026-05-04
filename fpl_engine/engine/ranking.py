@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Dict
 
@@ -30,7 +31,7 @@ def _team_projection_mean_and_std(
         total_mean += weighted_mean
         variance += weighted_std**2
 
-    return total_mean, max(1.0, variance**0.5)
+    return total_mean, max(1.0, math.sqrt(variance))
 
 
 def estimate_top10k_probability(
@@ -42,16 +43,14 @@ def estimate_top10k_probability(
 ) -> RankingEstimate:
     team_mean, team_std = _team_projection_mean_and_std(squad, projections)
 
-    # Sample the user's final score and moving top-10k cutoff.
-    team_samples = rng.normal(loc=team_mean, scale=team_std, size=config.samples)
-    threshold_samples = rng.normal(
-        loc=top10k_state.threshold_mean,
-        scale=max(1.0, top10k_state.threshold_std),
-        size=config.samples,
-    )
-
-    wins = team_samples >= threshold_samples
-    probability = float(np.mean(wins))
+    # Use exact analytical probability for difference of normal distributions
+    diff_mean = team_mean - top10k_state.threshold_mean
+    threshold_std = max(1.0, top10k_state.threshold_std)
+    diff_std = math.sqrt(team_std**2 + threshold_std**2)
+    
+    # Pr(Team - Threshold > 0)
+    z = diff_mean / diff_std
+    probability = 0.5 * (1.0 + math.erf(z / math.sqrt(2.0)))
 
     # Convert probability to an expected rank among active teams.
     expected_rank = int(max(1, round((1.0 - probability) * config.rank_spread)))
@@ -59,6 +58,6 @@ def estimate_top10k_probability(
     return RankingEstimate(
         probability_top10k=probability,
         expected_global_rank=expected_rank,
-        sampled_threshold_mean=float(np.mean(threshold_samples)),
-        sampled_threshold_std=float(np.std(threshold_samples)),
+        sampled_threshold_mean=top10k_state.threshold_mean,
+        sampled_threshold_std=threshold_std,
     )
